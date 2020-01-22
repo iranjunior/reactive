@@ -1,0 +1,10 @@
+{
+  "name": "reactive",
+  "version": "1.0.0",
+  "description": "this application is only for testing the RXJS library",
+  "main": "index.js",
+  "repository": "https://github.com/iranjunior/reactive",
+  "author": "iranjunior",
+  "license": "ISC",
+  "private": false
+}
