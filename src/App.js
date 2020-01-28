@@ -1,64 +1,52 @@
-import React, {useEffect, useState} from 'react';
-import Youtube from 'react-youtube';
+import React, { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import * as Rx from 'rxjs';
 import * as Operators from 'rxjs/operators';
-import { ajax } from 'rxjs/ajax';
-import './App.css';
+import "./App.css";
 
 function App() {
-  const [suggestions, setSuggestions] = useState('');
-  
-  useEffect(() => {
-    Rx.fromEvent(document.getElementById('event'), 'keyup').pipe(
-      Operators.map(event => event.target.value),
-      Operators.debounceTime(400),
-      Operators.distinctUntilChanged(),
-      Operators.switchMap(value => 
-        ajax({url: `https://api.github.com/search/users?q=${value}`, method: 'GET', crossDomain: true}).pipe(
-          Operators.filter(res => !!res),
-          Operators.map(({response}) => response.items)
-        )
-      ),
-      Operators.map(suggestions => setSuggestions(suggestions)),
-      Operators.retry(3),
-    ).subscribe();
-
+  const [toDo, setToDo] = useState([]);
+  const onDrop = useCallback(acceptedFiles => {
+   
+    acceptedFiles.forEach(element => {
+      const reader = new FileReader();
+      reader.readAsText(element);
+      Rx.fromEvent(reader, 'load').pipe(
+        Operators.map(({currentTarget}) => currentTarget.readyState === 2 && currentTarget.result.trim().split('\n')),
+        Operators.tap(todo => setToDo((prev) => [prev, ...todo].flat(Infinity))),
+        Operators.tap(() => document.querySelector(".zone").style.display = "none"),
+      ).subscribe()
+    });
   }, []);
-    const handleChange = (event) => {
-      console.log('suggestions', suggestions)
-    };  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const handleCLick = () => {
+    setTimeout(
+      () => {
+        document.querySelector(".zone").style.display = "flex";
+      }, 300)
+  };
   return (
-    <div
-    className="App"
-    >
-      <header>
-        <span>
-          <strong>GitHub</strong>
-        Search
-        </span>
-        <form>
-          <input 
-            id="event" 
-            type="text"
-            onChange={handleChange}
-          />
-          <button type="submit">Pesquisar</button>
-        </form>
+    <div className="App">
+      <header className="header">
+        <button onClick={handleCLick}> Adicionar ToDo file</button>
+        <div className="zone" {...getRootProps()}>
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Solte aqui seus arquivos ...</p>
+          ) : (
+            <p>Solte aqui seus arquivos, ou click para selecionar arquivos</p>
+          )}
+        </div>
       </header>
-      <div className="dropbox">
-      {
-        suggestions && suggestions.map(user => (
-          <div key={user.login} className="card">
-            <div className="image">
-             <img src={user.avatar_url} height="50" width="50"/>
-            </div>
-            <div className="description">
-              <span>{user.login}</span>
-            </div>
-          </div>
-        ))
-      }
-      
+      <div className="content">
+        <ul>
+          {toDo &&
+            toDo.map((todo, index) => (
+              <li key={index}>
+                <div className="card">{todo}</div>
+              </li>
+            ))}
+        </ul>
       </div>
     </div>
   );
