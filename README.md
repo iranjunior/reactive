@@ -9,8 +9,7 @@ Para acessar o exemplo do typeahead com react, execute os seguintes comandos:
 ```sh
 git clone https://github.com/iranjunior/reactive.git
 cd reative
-    git checkout implementation/typeahead
-
+git checkout implementation/typeahead
 yarn install && yarn start
 ```
 E para acessar o exemplo do readFile, execute os comandos:
