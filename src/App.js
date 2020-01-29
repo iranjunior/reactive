@@ -24,9 +24,6 @@ function App() {
     ).subscribe();
 
   }, []);
-    const handleChange = (event) => {
-      console.log('suggestions', suggestions)
-    };  
   return (
     <div
     className="App"
@@ -40,7 +37,6 @@ function App() {
           <input 
             id="event" 
             type="text"
-            onChange={handleChange}
           />
           <button type="submit">Pesquisar</button>
         </form>
@@ -48,7 +44,9 @@ function App() {
       <div className="dropbox">
       {
         suggestions && suggestions.map(user => (
-          <div key={user.login} className="card">
+          <a key={user.login} href={`http://concrete-iran-frontend.herokuapp.com/results/${user.login}`}>
+          <div className="card">
+
             <div className="image">
              <img src={user.avatar_url} height="50" width="50"/>
             </div>
@@ -56,6 +54,7 @@ function App() {
               <span>{user.login}</span>
             </div>
           </div>
+          </a>
         ))
       }
       

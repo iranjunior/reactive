@@ -59,6 +59,10 @@ input {
   width: 600px;
   height: 20px;
 }
+a {
+  cursor: pointer;
+  text-decoration: none;
+}
 button {
   width: 80px;
   height: 26px;
