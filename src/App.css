@@ -38,6 +38,7 @@ button {
 button:focus {
   outline: none;
   box-shadow: inset 2px 2px 1px 0px rgba(50, 50, 50, 0.75);
+  transform: scale(0.9, 0.9);
 }
 .content {
   display: flex;
