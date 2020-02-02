@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import Youtube from 'react-youtube';
 import * as Rx from 'rxjs';
 import * as Operators from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
@@ -12,39 +11,37 @@ function App() {
     Rx.fromEvent(document.getElementById('event'), 'keyup').pipe(
       Operators.map(event => event.target.value),
       Operators.debounceTime(400),
-      Operators.distinctUntilChanged(),
       Operators.switchMap(value => 
         ajax({url: `https://api.github.com/search/users?q=${value}`, method: 'GET', crossDomain: true}).pipe(
           Operators.filter(res => !!res),
           Operators.map(({response}) => response.items)
         )
       ),
-      Operators.map(suggestions => setSuggestions(suggestions)),
-      Operators.retry(3),
+      Operators.tap(suggestions => setSuggestions(suggestions)),
+      Operators.retry(2),
     ).subscribe();
 
   }, []);
+
   const RenderItems = () => {
     return (
       <div className="dropbox">
-      {
-
-      suggestions.map(user => (
-        <a key={user.login} href={`http://concrete-iran-frontend.herokuapp.com/results/${user.login}`}>
-        <div className="card">
-
-          <div className="image">
-           <img src={user.avatar_url} height="50" width="50"/>
-          </div>
-          <div className="description">
-            <span>{user.login}</span>
-          </div>
-        </div>
-        </a>
-      ))
-      }
+        {
+          suggestions.map(user => (
+            <a key={user.login} href={`http://concrete-iran-frontend.herokuapp.com/results/${user.login}`}>
+              <div className="card">
+                <div className="image">
+                  <img src={user.avatar_url} alt="photo_user" height="50" width="50"/>
+                </div>
+                <div className="description">
+                  <span>{user.login}</span>
+                </div>
+              </div>
+            </a>
+          ))
+        }
       </div>
-      )
+    )
   }
   return (
     <div
@@ -55,7 +52,7 @@ function App() {
           <strong>GitHub</strong>
         Search
         </span>
-        <form autocomplete="off">
+        <form autoComplete="off">
           <input 
             id="event" 
             type="text"
