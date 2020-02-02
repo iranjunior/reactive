@@ -24,6 +24,28 @@ function App() {
     ).subscribe();
 
   }, []);
+  const RenderItems = () => {
+    return (
+      <div className="dropbox">
+      {
+
+      suggestions.map(user => (
+        <a key={user.login} href={`http://concrete-iran-frontend.herokuapp.com/results/${user.login}`}>
+        <div className="card">
+
+          <div className="image">
+           <img src={user.avatar_url} height="50" width="50"/>
+          </div>
+          <div className="description">
+            <span>{user.login}</span>
+          </div>
+        </div>
+        </a>
+      ))
+      }
+      </div>
+      )
+  }
   return (
     <div
     className="App"
@@ -33,7 +55,7 @@ function App() {
           <strong>GitHub</strong>
         Search
         </span>
-        <form>
+        <form autocomplete="off">
           <input 
             id="event" 
             type="text"
@@ -41,24 +63,10 @@ function App() {
           <button type="submit">Pesquisar</button>
         </form>
       </header>
-      <div className="dropbox">
       {
-        suggestions && suggestions.map(user => (
-          <a key={user.login} href={`http://concrete-iran-frontend.herokuapp.com/results/${user.login}`}>
-          <div className="card">
-
-            <div className="image">
-             <img src={user.avatar_url} height="50" width="50"/>
-            </div>
-            <div className="description">
-              <span>{user.login}</span>
-            </div>
-          </div>
-          </a>
-        ))
+        suggestions && RenderItems()
       }
       
-      </div>
     </div>
   );
 }
